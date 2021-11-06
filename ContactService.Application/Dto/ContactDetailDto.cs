@@ -15,4 +15,10 @@ namespace ContactService.Application.Dto
         public string ContactDetailContent { get; set; }
     }
 
+    public enum ContactDetailType
+    {
+        PHONE = 1,
+        EMAIL = 2,
+        LOCATION = 3
+    }
 }

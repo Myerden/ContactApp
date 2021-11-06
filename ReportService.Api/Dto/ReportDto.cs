@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReportService.Api.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace ReportService.Api.Dto
     {
         public Guid Id { get; set; }
         public DateTime ReportRequestDate { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public ReportStatus ReportStatus { get; set; }
+        public string ReportPath { get; set; }
     }
 }

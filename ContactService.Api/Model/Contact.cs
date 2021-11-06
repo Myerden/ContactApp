@@ -14,6 +14,7 @@ namespace ContactService.Api.Model
         [Required]
         public string LastName { get; set; }
         public string Company { get; set; }
+        [Required]
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         [Required]

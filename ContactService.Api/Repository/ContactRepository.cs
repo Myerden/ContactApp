@@ -60,7 +60,7 @@ namespace ContactService.Api.Repository
 
         public async Task<IEnumerable<Contact>> Get()
         {
-            return await _dbContext.Contacts.ToListAsync();
+            return await _dbContext.Contacts.Include(c => c.ContactDetails).ToListAsync();
         }
 
         public async Task<Contact> Get(Guid id)

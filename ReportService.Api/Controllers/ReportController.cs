@@ -45,42 +45,13 @@ namespace ReportService.Api.Controllers
             return Ok(reportDto);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ReportDto reportDto)
+        [HttpPost("generate-report")]
+        public async Task<IActionResult> Post()
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var report = _mapper.Map<Report>(reportDto);
-            await _reportRepository.Create(report);
-            reportDto = _mapper.Map<ReportDto>(report);
-            return CreatedAtAction(nameof(Get), new { id = reportDto.Id }, reportDto);
+            
+            return Ok();
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody] ReportDto reportDto)
-        {
-            if (await _reportRepository.Get(id) == null)
-            {
-                return NotFound("Report not found");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != reportDto.Id)
-            {
-                return BadRequest();
-            }
-
-            var report = _mapper.Map<Report>(reportDto);
-            await _reportRepository.Update(report);
-            return NoContent();
-        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)

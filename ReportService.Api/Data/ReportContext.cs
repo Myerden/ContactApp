@@ -18,7 +18,9 @@ namespace ReportService.Api.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            modelBuilder.Entity<Report>().Property(cd => cd.ReportStatus).HasConversion<int>().IsRequired();
+
+            modelBuilder.Entity<Report>().Property(cd => cd.ReportPath).HasMaxLength(500);
         }
     }
 }
