@@ -9,6 +9,7 @@ namespace ContactService.Api.Dto
 {
     public class ContactDetailDto
     {
+        public Guid Id { get; set; }
         [Required]
         public ContactDetailType ContactDetailType { get; set; }
         [Required]

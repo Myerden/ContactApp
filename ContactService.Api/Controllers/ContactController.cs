@@ -93,5 +93,52 @@ namespace ContactService.Api.Controllers
             await _contactRepository.Delete(id);
             return NoContent();
         }
+
+        [HttpPost("{id}/details")]
+        public async Task<IActionResult> PostDetail(Guid id, [FromBody] ContactDetailDto contactDetailDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var contact = await _contactRepository.Get(id);
+
+            if(contact == null)
+            {
+                return NotFound("Contact not found");
+            }
+
+            var contactDetail = _mapper.Map<ContactDetail>(contactDetailDto);
+            contact.ContactDetails.Add(contactDetail);
+            await _contactRepository.Update(contact);
+            contactDetailDto = _mapper.Map<ContactDetailDto>(contactDetail);
+            return CreatedAtAction(nameof(Get), new { id = contact.Id }, contactDetailDto);
+        }
+
+        [HttpDelete("{id}/details/{detailId}")]
+        public async Task<IActionResult> DeleteDetail(Guid id, Guid detailId)
+        {
+            var contact = await _contactRepository.Get(id);
+
+            if (contact == null)
+            {
+                return NotFound("Contact not found");
+            }
+
+            var contactDetailIndex = contact.ContactDetails.FindIndex(cd => cd.Id == detailId);
+
+            if (contactDetailIndex == -1)
+            {
+                return NotFound("Contact Detail not found");
+            }
+
+            contact.ContactDetails.RemoveAt(contactDetailIndex);
+
+            await _contactRepository.Update(contact);
+
+            return NoContent();
+        }
+
     }
 }

@@ -8,6 +8,7 @@ namespace ContactService.Api.Model
 {
     public class ContactDetail
     {
+        public Guid Id { get; set; }
         [Required]
         public ContactDetailType ContactDetailType { get; set; }
         [Required]
