@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MassTransit;
+using Microsoft.Extensions.Configuration;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,11 +20,15 @@ namespace ReportService.Api.Controllers
     {
         private readonly IReportRepository _reportRepository;
         private readonly IMapper _mapper;
+        private readonly IBus _bus;
+        private readonly IConfiguration _configuration;
 
-        public ReportController(IReportRepository reportRepository, IMapper mapper)
+        public ReportController(IReportRepository reportRepository, IMapper mapper, IBus bus, IConfiguration configuration)
         {
             _reportRepository = reportRepository;
             _mapper = mapper;
+            _bus = bus;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -48,7 +54,16 @@ namespace ReportService.Api.Controllers
         [HttpPost("generate-report")]
         public async Task<IActionResult> Post()
         {
-            
+            Report report = new Report();
+            report.ReportRequestDate = DateTime.Now;
+            report.ReportStatus = ReportStatus.PREPARING;
+            await _reportRepository.Create(report);
+            var reportDto = _mapper.Map<ReportDto>(report);
+
+            Uri uri = new Uri(_configuration["RabbitMQ:ReportQueue"]);
+            var endPoint = await _bus.GetSendEndpoint(uri);
+            await endPoint.Send(reportDto);
+
             return Ok();
         }
 
