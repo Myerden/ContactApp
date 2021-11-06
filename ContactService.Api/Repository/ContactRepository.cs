@@ -32,7 +32,7 @@ namespace ContactService.Api.Repository
                 contact.UpdatedAt = DateTime.Now;
                 _dbContext.Entry(contact).State = EntityState.Modified;
                 _dbContext.Entry(contact).Property(c => c.CreatedAt).IsModified = false;
-                //_dbContext.Entry(contact.ContactDetails).State = EntityState.Modified;
+                _dbContext.Entry(contact.ContactDetails).State = EntityState.Modified;
                 
                 var num = await _dbContext.SaveChangesAsync();
                 return num > 0;
