@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ContactService.Api.Dto;
+using ContactService.Application.Dto;
 using ContactService.Api.Model;
 using ContactService.Api.Repository;
 using Microsoft.AspNetCore.Mvc;
