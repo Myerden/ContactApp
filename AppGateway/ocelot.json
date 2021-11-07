@@ -1,0 +1,33 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:443"
+  },
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/Contact/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "contactapi",
+          "Port": 5003
+        }
+      ],
+      "UpstreamPathTemplate": "/contacts/{everything}",
+      "UpstreamHttpMethod": [ "Post", "Put", "Get", "Delete" ],
+      "RouteIsCaseSensetive": false
+    },
+    {
+      "DownstreamPathTemplate": "/api/Report/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reportapi",
+          "Port": 5005
+        }
+      ],
+      "UpstreamPathTemplate": "/reports/{everything}",
+      "UpstreamHttpMethod": [ "Post", "Put", "Get", "Delete" ],
+      "RouteIsCaseSensetive": false
+    }
+  ]
+}

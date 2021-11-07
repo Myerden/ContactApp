@@ -1,0 +1,84 @@
+version: "3.6"
+services:
+    rabbitmq:       
+        image: rabbitmq:3-management
+        container_name: rabbitmq
+        restart: always
+        ports:
+            - 5672:5672
+            - 15672:15672
+        environment:
+            - RABBITMQ_DEFAULT_USER=user
+            - RABBITMQ_DEFAULT_PASS=password 
+    
+    contactapidb: 
+        image: postgres
+        container_name: postgredb
+        restart: always
+        ports: 
+            - "5432:5432"
+        environment: 
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=admin
+            - POSTGRES_DB=ContactDB
+        
+    reportapidb: 
+        image: postgres
+        container_name: postgredb
+        restart: always
+        ports: 
+            - "5433:5432"
+        environment: 
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=admin
+            - POSTGRES_DB=ReportDB
+        
+    appgateway:    
+        image: appgateway  
+        container_name: appgateway
+        ports:
+            - 5000:80
+            - 5001:443
+        environment:
+            - "ASPNETCORE_URLS=https://+;http://+"
+            - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
+            - Kestrel__Certificates__Default__Password=SecretPassword    
+        build: 
+            context: ./AppGateway
+            dockerfile: AppGateway/Dockerfile 
+        restart: always
+                
+    contactapi:
+        image: contactapi  
+        container_name: contactapi
+        ports:
+            - 5002:80
+            - 5003:443
+        environment:
+            - "ASPNETCORE_URLS=https://+;http://+"
+            - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
+            - Kestrel__Certificates__Default__Password=SecretPassword        
+        build: 
+            context: ./ContactService.Api
+            dockerfile: ContactService.Api/Dockerfile 
+        restart: always       
+        depends_on:
+            - contactapidb
+        
+    reportapi:
+        image: reportapi     
+        container_name: reportapi
+        ports:
+            - 5004:80
+            - 5005:443
+        environment:
+            - "ASPNETCORE_URLS=https://+;http://+"
+            - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
+            - Kestrel__Certificates__Default__Password=SecretPassword      
+        build: 
+            context: ./ReportService.Api
+            dockerfile: ReportService.Api/Dockerfile  
+        restart: always
+        depends_on:
+            - rabbitmq 
+            - reportapidb 
