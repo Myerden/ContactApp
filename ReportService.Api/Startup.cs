@@ -37,9 +37,10 @@ namespace ReportService.Api
 
             services.AddMassTransit(configurator =>
             {
+                configurator.AddConsumer<ReportRequestConsumer>();
                 configurator.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
                 {
-                    config.Host(new Uri(Configuration["RabbitMQ:HostName"]), host =>
+                    config.Host(Configuration["RabbitMQ:HostName"], host =>
                     {
                         host.Username(Configuration["RabbitMQ:Username"]);
                         host.Password(Configuration["RabbitMQ:Password"]);
