@@ -4,12 +4,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ReportService.Api.Consumer;
+using ReportService.Api.Data;
+using ReportService.Api.Repository;
 using ReportService.Api.Services;
 using System;
 using System.Collections.Generic;
@@ -30,6 +33,8 @@ namespace ReportService.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ReportContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddMassTransit(configurator =>
             {
                 configurator.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
@@ -49,7 +54,9 @@ namespace ReportService.Api
             });
             services.AddMassTransitHostedService();
 
-            services.AddTransient<ReportService.Api.Services.IReportService, ReportService.Api.Services.ReportService>();
+            services.AddScoped<IReportRepository, ReportRepository>();
+
+            services.AddScoped<ReportService.Api.Services.IReportService, ReportService.Api.Services.ReportService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
