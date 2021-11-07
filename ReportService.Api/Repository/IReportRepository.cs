@@ -12,6 +12,8 @@ namespace ReportService.Api.Repository
 
         public Task<bool> Update(Report report);
 
+        public Task<bool> UpdateStatus(Guid id, ReportStatus status, string reportPath = null);
+
         public Task<bool> Delete(Guid id);
 
         public Task<IEnumerable<Report>> Get();

@@ -1,0 +1,32 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "ContactListingService";
+
+package ContactServiceApi;
+
+service ContactServiceGrpc {
+  rpc ListAllContacts (ContactListRequest) returns (ContactListReply);
+}
+
+message ContactListRequest {
+  string customerId = 1;
+  int32 credit = 2;
+}
+
+message ContactListReply {
+  repeated Contact Contacts=1;
+}
+
+message Contact {
+  string Id = 1;
+  string FirstName=2;
+  string LastName=3;
+  string Company=4;
+  repeated ContactDetail ContactDetails=5;
+}
+
+message ContactDetail {
+  string Id = 1;
+  int32 ContactDetailType=2;
+  string ContactDetailContent=3;
+}

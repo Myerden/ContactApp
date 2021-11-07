@@ -1,7 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Protos\**" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Protos\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Protos\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
 </Project>

@@ -28,18 +28,18 @@ namespace ReportService.Api
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddMassTransit(configurator =>
             {
                 configurator.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
                 {
-                    config.Host(new Uri(configuration["RabbitMQ:HostName"]), host =>
+                    config.Host(new Uri(Configuration["RabbitMQ:HostName"]), host =>
                     {
-                        host.Username(configuration["RabbitMQ:Username"]);
-                        host.Password(configuration["RabbitMQ:Password"]);
+                        host.Username(Configuration["RabbitMQ:Username"]);
+                        host.Password(Configuration["RabbitMQ:Password"]);
                     });
-                    config.ReceiveEndpoint(configuration["RabbitMQ:ReportQueue"], endp =>
+                    config.ReceiveEndpoint(Configuration["RabbitMQ:ReportQueue"], endp =>
                     {
                         endp.PrefetchCount = 1;
                         endp.UseMessageRetry(r => r.Interval(2, 100));

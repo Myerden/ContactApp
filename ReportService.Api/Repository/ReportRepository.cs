@@ -42,6 +42,23 @@ namespace ReportService.Api.Repository
             }
         }
 
+        public async Task<bool> UpdateStatus(Guid id, ReportStatus status, string reportPath = null)
+        {
+            try
+            {
+                var report = await Get(id);
+
+                report.ReportStatus = status;
+                report.ReportPath = reportPath;
+
+                return await Update(report);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> Delete(Guid id)
         {
             try

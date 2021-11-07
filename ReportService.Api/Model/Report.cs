@@ -22,6 +22,7 @@ namespace ReportService.Api.Model
     public enum ReportStatus
     {
         PREPARING = 1,
-        COMPLETED = 2
+        COMPLETED = 2,
+        FAILED = 3
     }
 }
