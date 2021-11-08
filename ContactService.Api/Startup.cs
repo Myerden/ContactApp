@@ -29,7 +29,9 @@ namespace ContactService.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ContactContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ContactContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("DefaultConnection")));
+
+            services.AddScoped<IContactContext>(provider => provider.GetService<ContactContext>());
 
             services.AddScoped<IContactRepository, ContactRepository>();
 

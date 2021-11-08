@@ -1,15 +1,15 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:5001"
+    "BaseUrl": "http://localhost:5000"
   },
   "Routes": [
     {
       "DownstreamPathTemplate": "/api/Contact/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "contactapi",
-          "Port": 5003
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/contacts/{everything}",
@@ -17,15 +17,41 @@
       "RouteIsCaseSensetive": false
     },
     {
+      "DownstreamPathTemplate": "/api/Contact",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "contactapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/contacts",
+      "UpstreamHttpMethod": [ "Post", "Put", "Get", "Delete" ],
+      "RouteIsCaseSensetive": false
+    },
+    {
       "DownstreamPathTemplate": "/api/Report/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "reportapi",
-          "Port": 5005
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/reports/{everything}",
+      "UpstreamHttpMethod": [ "Post", "Put", "Get", "Delete" ],
+      "RouteIsCaseSensetive": false
+    },
+    {
+      "DownstreamPathTemplate": "/api/Report",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reportapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/reports",
       "UpstreamHttpMethod": [ "Post", "Put", "Get", "Delete" ],
       "RouteIsCaseSensetive": false
     }

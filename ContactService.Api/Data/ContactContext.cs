@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ContactService.Api.Data
 {
-    public class ContactContext : DbContext
+    public class ContactContext : DbContext, IContactContext
     {
         public ContactContext(DbContextOptions<ContactContext> options) : base(options)
         {

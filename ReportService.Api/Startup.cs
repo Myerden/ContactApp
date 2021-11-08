@@ -33,7 +33,15 @@ namespace ReportService.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ReportContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ReportContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("DefaultConnection")));
+
+            services.AddScoped<IReportContext>(provider => provider.GetService<ReportContext>());
+
+            services.AddScoped<IReportRepository, ReportRepository>();
+
+            services.AddScoped<ReportService.Api.Services.IReportService, ReportService.Api.Services.ReportService>();
+
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddMassTransit(configurator =>
             {
@@ -54,10 +62,6 @@ namespace ReportService.Api
                 }));
             });
             services.AddMassTransitHostedService();
-
-            services.AddScoped<IReportRepository, ReportRepository>();
-
-            services.AddScoped<ReportService.Api.Services.IReportService, ReportService.Api.Services.ReportService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

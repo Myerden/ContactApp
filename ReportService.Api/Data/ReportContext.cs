@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReportService.Api.Data
 {
-    public class ReportContext : DbContext
+    public class ReportContext : DbContext, IReportContext
     {
         public ReportContext(DbContextOptions<ReportContext> options) : base(options)
         {
