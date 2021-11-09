@@ -14,6 +14,7 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
+        "DefaultConnection": "Server=localhost;Port=5433;User Id=admin;Password=admin;Database=ReportDB;SSL Mode=Disable;",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
@@ -22,6 +23,7 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
+        "DefaultConnection": "Server=localhost;Port=5433;User Id=admin;Password=admin;Database=ReportDB;SSL Mode=Disable;",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",

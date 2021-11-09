@@ -75,6 +75,9 @@ namespace ReportService.Api.Services
                 }
 
                 var stream = new MemoryStream();
+
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
                 using (var xlPackage = new ExcelPackage(stream))
                 {
                     var worksheet = xlPackage.Workbook.Worksheets.Add("ContactReport");
@@ -105,14 +108,16 @@ namespace ReportService.Api.Services
                         currentRow++;
                     }
 
+                    worksheet.Cells.AutoFitColumns();
+
                     xlPackage.Save();
                 }
-                //stream.Position = 0;
 
-                //File file = File.(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "users.xlsx");
-                string reportPath = "/reports/" + reportDto.Id.ToString() + ".xlsx";
+                Directory.CreateDirectory("reports");
 
-                using (FileStream fs = File.Create(reportPath))
+                string reportPath = "reports/" + reportDto.Id.ToString() + ".xlsx";
+
+                using (FileStream fs = new FileStream(reportPath, FileMode.Create))
                 {
                     byte[] fileBytes = stream.ToArray();
                     // Add some information to the file.

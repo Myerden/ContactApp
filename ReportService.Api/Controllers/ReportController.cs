@@ -51,6 +51,27 @@ namespace ReportService.Api.Controllers
             return Ok(reportDto);
         }
 
+        [HttpGet("{id}/download")]
+        public async Task<IActionResult> GetFile(Guid id)
+        {
+            var report = await _reportRepository.Get(id);
+            if (report == null)
+            {
+                return NotFound("Report not found");
+            }
+            else if(report.ReportStatus != ReportStatus.COMPLETED)
+            {
+                return NotFound("File not found");
+            }
+
+            FileContentResult result = new FileContentResult(System.IO.File.ReadAllBytes(report.ReportPath), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            {
+                FileDownloadName = "report.xlsx"
+            };
+
+            return result;
+        }
+
         [HttpPost("generate-report")]
         public async Task<IActionResult> Post()
         {
@@ -60,11 +81,14 @@ namespace ReportService.Api.Controllers
             await _reportRepository.Create(report);
             var reportDto = _mapper.Map<ReportDto>(report);
 
-            Uri uri = new Uri(_configuration["RabbitMQ:ReportQueue"]);
+            string rHost = _configuration["RabbitMQ:HostName"];
+            string rQueue = _configuration["RabbitMQ:ReportQueue"];
+
+            Uri uri = new Uri("rabbitmq://" + rHost + "/" + rQueue);
             var endPoint = await _bus.GetSendEndpoint(uri);
             await endPoint.Send(reportDto);
 
-            return Ok();
+            return CreatedAtAction(nameof(Get), new { id = reportDto.Id }, reportDto);
         }
 
 
