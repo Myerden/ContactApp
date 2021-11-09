@@ -126,14 +126,14 @@ namespace ContactService.Api.Controllers
                 return NotFound("Contact not found");
             }
 
-            var contactDetailIndex = contact.ContactDetails.FindIndex(cd => cd.Id == detailId);
+            var contactDetail = contact.ContactDetails.Find(cd => cd.Id == detailId);
 
-            if (contactDetailIndex == -1)
+            if (contactDetail == null)
             {
                 return NotFound("Contact Detail not found");
             }
 
-            contact.ContactDetails.RemoveAt(contactDetailIndex);
+            contact.ContactDetails.Remove(contactDetail);
 
             await _contactRepository.Update(contact);
 

@@ -32,12 +32,12 @@ namespace ContactService.Api.Repository
                 contact.UpdatedAt = DateTime.Now;
                 _dbContext.Entry(contact).State = EntityState.Modified;
                 _dbContext.Entry(contact).Property(c => c.CreatedAt).IsModified = false;
-                _dbContext.Entry(contact.ContactDetails).State = EntityState.Modified;
-                
+                _dbContext.Entry(contact).Collection(c => c.ContactDetails).IsModified = true;
+
                 var num = await _dbContext.SaveChangesAsync();
                 return num > 0;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
             }
@@ -60,7 +60,7 @@ namespace ContactService.Api.Repository
 
         public async Task<IEnumerable<Contact>> Get()
         {
-            return await _dbContext.Contacts.Include(c => c.ContactDetails).ToListAsync();
+            return await _dbContext.Contacts.ToListAsync();
         }
 
         public async Task<Contact> Get(Guid id)
