@@ -14,7 +14,6 @@ namespace ContactService.Application.Dto
         [Required]
         public string LastName { get; set; }
         public string Company { get; set; }
-        [Required]
         public List<ContactDetailDto> ContactDetails { get; set; }
     }
 }

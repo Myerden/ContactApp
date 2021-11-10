@@ -17,7 +17,6 @@ namespace ContactService.Api.Model
         [Required]
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        [Required]
         public List<ContactDetail> ContactDetails { get; set; }
     }
 }
