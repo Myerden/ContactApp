@@ -13,13 +13,24 @@ You will need the following tools:
 ### Installing
 Follow these steps to get your development environment set up: (Before Run Start the Docker Desktop)
 1. Clone the repository
-2. At the root directory which include **docker-compose.yml** files, run below command:
+2. (Optional) If you want, you can limit the Wsl2's memory and cpu usage. ([see also](https://github.com/microsoft/WSL/issues/4166))
+  - Go to User's Document Folder ( Press "WinKey + R" and run "%UserProfile%" )
+  - Create a file named *.wslconfig*
+  - Write its content as follows (Windows restart may be required)
+```
+[wsl2]
+memory=8GB
+processors=2
+swap=0
+localhostForwarding=true
+```
+3. At the root directory which include **docker-compose.yml** files, run below command:
 ```csharp
 docker-compose up
 ```
-3. Wait for docker compose all microservices. 
+4. Wait for docker compose all microservices. 
 
-4. You can **launch microservices** as below urls:
+5. You can **launch microservices** as below urls:
 
 * **Gateway API -> http://localhost:5000**
 * **Contact API -> http://localhost:5002**
