@@ -181,5 +181,160 @@ namespace ContactService.Test
 
         #endregion
 
+        #region Update
+
+        [Fact]
+        public async void UpdateContact_ShouldReturnOkResult()
+        {
+            var controller = new ContactController(repository, mapper);
+
+            var id = ContactData.DEMO[0].Id;
+
+            var data = await controller.Get(id) as OkObjectResult;
+
+            Assert.IsType<OkObjectResult>(data);
+
+            var obj = data.Value as ContactDto;
+
+            Assert.NotNull(obj);
+
+            var contact = new ContactDto()
+            {
+                Id = id,
+                FirstName = "Updated First Name",
+                LastName = "Updated Last Name",
+                Company = "Updated Company Name",
+            };
+
+            var updatedResult = await controller.Put(id, contact) as NoContentResult;
+
+            Assert.IsType<NoContentResult>(updatedResult);
+
+            var updatedData = await controller.Get(id) as OkObjectResult;
+
+            Assert.IsType<OkObjectResult>(updatedData);
+
+            var updatedObj = updatedData.Value as ContactDto;
+
+            Assert.NotNull(updatedObj);
+
+            Assert.Equal(updatedObj.FirstName, contact.FirstName);
+            Assert.Equal(updatedObj.LastName, contact.LastName);
+            Assert.Equal(updatedObj.Company, contact.Company);
+        }
+
+        [Fact]
+        public async void UpdateContact_ShouldReturnBadRequest()
+        {
+            var controller = new ContactController(repository, mapper);
+
+            var id = ContactData.DEMO[0].Id;
+
+            var contact = new ContactDto()
+            {
+                Id = id,
+                FirstName = "Updated First Name",
+                //LastName = "Updated Last Name", 
+                Company = "Updated Company Name",
+            };
+
+            // LastName field is required
+            var updatedResult = await controller.Put(id, contact);
+
+            Assert.IsType<BadRequestResult>(updatedResult);
+        }
+
+        [Fact]
+        public async void UpdateContact_ShouldReturnNotFoundResult()
+        {
+            var controller = new ContactController(repository, mapper);
+
+            var id = Guid.NewGuid();
+
+            var contact = new ContactDto()
+            {
+                Id = id,
+                FirstName = "Updated First Name",
+                LastName = "Updated Last Name",
+                Company = "Updated Company Name",
+            };
+
+            var updatedResult = await controller.Put(id, contact);
+
+            Assert.IsType<NotFoundResult>(updatedResult);
+        }
+
+        #endregion
+
+        #region Delete
+
+        [Fact]
+        public async void DeleteContact_ShouldReturnOkResult()
+        {
+            var controller = new ContactController(repository, mapper);
+
+            var id = ContactData.DEMO[0].Id;
+
+            var data = await controller.Delete(id);
+
+            Assert.IsType<NoContentResult>(data);
+
+            data = await controller.Get(id);
+
+            Assert.IsType<NotFoundResult>(data);
+        }
+
+        [Fact]
+        public async void DeleteContact_ShouldReturnNotFoundResult()
+        {
+            var controller = new ContactController(repository, mapper);
+
+            var id = Guid.NewGuid();
+
+            var data = await controller.Delete(id);
+
+            Assert.IsType<NotFoundResult>(data);
+        }
+
+        [Fact]
+        public async void DeleteContactDetail_ShouldReturnOkResult()
+        {
+            var controller = new ContactController(repository, mapper);
+
+            var id = ContactData.DEMO[0].Id;
+            var detailId = ContactData.DEMO[0].ContactDetails[0].Id;
+
+            var data = await controller.DeleteDetail(id, detailId);
+
+            Assert.IsType<NoContentResult>(data);
+
+            var getData = await controller.Get(id) as OkObjectResult;
+
+            Assert.IsType<OkObjectResult>(data);
+
+            var obj = getData.Value as ContactDto;
+
+            Assert.NotNull(obj);
+
+            var contactDetail = obj.ContactDetails.Find(cd => cd.Id == detailId);
+
+            Assert.Null(contactDetail);
+        }
+
+        [Fact]
+        public async void DeleteContactDetail_ShouldReturnNotFoundResult()
+        {
+            var controller = new ContactController(repository, mapper);
+
+            var id = ContactData.DEMO[0].Id;
+            var detailId = Guid.NewGuid();
+
+            var data = await controller.DeleteDetail(id, detailId);
+
+            Assert.IsType<NotFoundResult>(data);
+        }
+
+        #endregion
+
     }
 }
