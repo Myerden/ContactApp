@@ -4,41 +4,20 @@ services:
         image: rabbitmq:3-management
         container_name: contactrabbitmq
         restart: always
-        ports:
-            - 5672:5672
-            - 15672:15672
-        environment:
-            - RABBITMQ_DEFAULT_USER=user
-            - RABBITMQ_DEFAULT_PASS=password 
     
     contactapidb: 
         image: postgres
         container_name: contactapidb
         restart: always
-        ports: 
-            - 5432:5432
-        environment: 
-            - POSTGRES_USER=admin
-            - POSTGRES_PASSWORD=admin
-            - POSTGRES_DB=ContactDB
         
     reportapidb: 
         image: postgres
         container_name: reportapidb
         restart: always
-        ports: 
-            - 5433:5432
-        environment: 
-            - POSTGRES_USER=admin
-            - POSTGRES_PASSWORD=admin
-            - POSTGRES_DB=ReportDB
         
     contactappgateway:    
         image: appgateway  
         container_name: contactappgateway
-        ports:
-            - 5000:80
-            - 5001:443 
         build: 
             context: .
             dockerfile: AppGateway/Dockerfile 
@@ -49,12 +28,7 @@ services:
                 
     contactapi:
         image: contactapi  
-        container_name: contactapi
-        ports:
-            - 5002:80
-            - 5003:443
-        environment:
-            - DefaultConnection=Server=contactapidb;Port=5432;User Id=admin;Password=admin;Database=ContactDB;SSL Mode=Disable;    
+        container_name: contactapi  
         build: 
             context: .
             dockerfile: ContactService.Api/Dockerfile 
@@ -65,16 +39,6 @@ services:
     reportapi:
         image: reportapi     
         container_name: reportapi
-        ports:
-            - 5004:80
-            - 5005:443
-        environment:
-            - DefaultConnection=Server=reportapidb;Port=5432;User Id=admin;Password=admin;Database=ReportDB;SSL Mode=Disable;
-            - RABBITMQ_HOSTNAME=contactrabbitmq;
-            - RABBITMQ_USERNAME=user;
-            - RABBITMQ_PASSWORD=password;
-            - RABBITMQ_REPORT_QUEUE=reportQueue;
-            - CONTACT_API=http://contactappgateway/contacts;
         build: 
             context: .
             dockerfile: ReportService.Api/Dockerfile  
@@ -85,9 +49,4 @@ services:
 
     pgadmin:
         image: dpage/pgadmin4
-        environment:
-          - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-          - PGADMIN_DEFAULT_PASSWORD=admin
-        ports:
-          - "5050:80"
         restart: always

@@ -24,7 +24,12 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "DefaultConnection": "Server=localhost;Port=5433;User Id=admin;Password=admin;Database=ReportDB;SSL Mode=Disable;",
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RABBITMQ_HOSTNAME": "amqp://localhost",
+        "RABBITMQ_USERNAME": "user",
+        "RABBITMQ_PASSWORD": "password",
+        "RABBITMQ_REPORT_QUEUE": "reportQueue",
+        "CONTACT_API": "http://localhost:5000/contacts"
       },
       "dotnetRunMessages": "true",
       "applicationUrl": "https://localhost:5005;http://localhost:5004"
