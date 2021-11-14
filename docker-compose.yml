@@ -38,11 +38,7 @@ services:
         container_name: contactappgateway
         ports:
             - 5000:80
-            - 5001:443
-        #environment:
-        #    - "ASPNETCORE_URLS=https://+;http://+"
-        #    - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
-        #    - Kestrel__Certificates__Default__Password=SecretPassword    
+            - 5001:443 
         build: 
             context: .
             dockerfile: AppGateway/Dockerfile 
@@ -58,10 +54,7 @@ services:
             - 5002:80
             - 5003:443
         environment:
-            - DefaultConnection=Server=contactapidb;Port=5432;User Id=admin;Password=admin;Database=ContactDB;SSL Mode=Disable;
-        #    - "ASPNETCORE_URLS=https://+;http://+"
-        #    - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
-        #    - Kestrel__Certificates__Default__Password=SecretPassword        
+            - DefaultConnection=Server=contactapidb;Port=5432;User Id=admin;Password=admin;Database=ContactDB;SSL Mode=Disable;    
         build: 
             context: .
             dockerfile: ContactService.Api/Dockerfile 
@@ -77,9 +70,11 @@ services:
             - 5005:443
         environment:
             - DefaultConnection=Server=reportapidb;Port=5432;User Id=admin;Password=admin;Database=ReportDB;SSL Mode=Disable;
-        #    - "ASPNETCORE_URLS=https://+;http://+"
-        #    - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
-        #    - Kestrel__Certificates__Default__Password=SecretPassword      
+            - RABBITMQ_HOSTNAME=contactrabbitmq;
+            - RABBITMQ_USERNAME=user;
+            - RABBITMQ_PASSWORD=password;
+            - RABBITMQ_REPORT_QUEUE=reportQueue;
+            - CONTACT_API=http://contactappgateway/contacts;
         build: 
             context: .
             dockerfile: ReportService.Api/Dockerfile  

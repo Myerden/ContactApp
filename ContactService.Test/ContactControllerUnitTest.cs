@@ -21,7 +21,7 @@ namespace ContactService.Test
         private IContactRepository repository;
         IMapper mapper;
         private static DbContextOptions<ContactContext> dbContextOptions { get; set; }
-        public static string connectionString = "Server=localhost;Port=5432;User Id=admin;Password=admin;Database=ContactDB;SSL Mode=Disable;";
+        public static string connectionString = "Server=localhost;Port=5432;User Id=admin;Password=admin;Database=ContactDB_Test;SSL Mode=Disable;";
 
         static ContactControllerUnitTest()
         {

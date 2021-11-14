@@ -48,12 +48,12 @@ namespace ReportService.Api
                 configurator.AddConsumer<ReportRequestConsumer>();
                 configurator.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
                 {
-                    config.Host(Configuration["RabbitMQ:HostName"], host =>
+                    config.Host(Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME"), host =>
                     {
-                        host.Username(Configuration["RabbitMQ:Username"]);
-                        host.Password(Configuration["RabbitMQ:Password"]);
+                        host.Username(Environment.GetEnvironmentVariable("RABBITMQ_USERNAME"));
+                        host.Password(Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD"));
                     });
-                    config.ReceiveEndpoint(Configuration["RabbitMQ:ReportQueue"], endp =>
+                    config.ReceiveEndpoint(Environment.GetEnvironmentVariable("RABBITMQ_REPORT_QUEUE"), endp =>
                     {
                         endp.PrefetchCount = 1;
                         endp.UseMessageRetry(r => r.Interval(2, 100));

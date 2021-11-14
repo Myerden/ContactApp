@@ -21,14 +21,12 @@ namespace ReportService.Api.Controllers
         private readonly IReportRepository _reportRepository;
         private readonly IMapper _mapper;
         private readonly IBus _bus;
-        private readonly IConfiguration _configuration;
 
-        public ReportController(IReportRepository reportRepository, IMapper mapper, IBus bus, IConfiguration configuration)
+        public ReportController(IReportRepository reportRepository, IMapper mapper, IBus bus)
         {
             _reportRepository = reportRepository;
             _mapper = mapper;
             _bus = bus;
-            _configuration = configuration;
         }
 
         [HttpGet]
@@ -81,8 +79,8 @@ namespace ReportService.Api.Controllers
             await _reportRepository.Create(report);
             var reportDto = _mapper.Map<ReportDto>(report);
 
-            string rHost = _configuration["RabbitMQ:HostName"];
-            string rQueue = _configuration["RabbitMQ:ReportQueue"];
+            string rHost = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME");
+            string rQueue = Environment.GetEnvironmentVariable("RABBITMQ_REPORT_QUEUE");
 
             Uri uri = new Uri("rabbitmq://" + rHost + "/" + rQueue);
             var endPoint = await _bus.GetSendEndpoint(uri);

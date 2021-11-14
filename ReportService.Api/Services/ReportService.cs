@@ -18,12 +18,10 @@ namespace ReportService.Api.Services
     public class ReportService : IReportService
     {
         private readonly IReportRepository _reportRepository;
-        private readonly IConfiguration _configuration;
 
-        public ReportService(IReportRepository reportRepository, IConfiguration configuration)
+        public ReportService(IReportRepository reportRepository)
         {
             _reportRepository = reportRepository;
-            _configuration = configuration;
         }
 
         public async Task GenerateReport(ReportDto reportDto)
@@ -32,7 +30,7 @@ namespace ReportService.Api.Services
             {
                 using var client = new HttpClient();
 
-                var result = await client.GetAsync(_configuration["Endpoints:ListAllContacts"]);
+                var result = await client.GetAsync(Environment.GetEnvironmentVariable("CONTACT_API"));
 
                 if (result.StatusCode != System.Net.HttpStatusCode.OK)
                 {
