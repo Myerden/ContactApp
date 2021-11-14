@@ -1,6 +1,6 @@
 # ContactApp
 
-There is a Contact List App which developed in .NET 5 with microservice architecture.
+This project is a Contact Application developed in .NET 5 with microservice architecture.
 
 ## Overview
 
