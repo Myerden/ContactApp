@@ -31,7 +31,7 @@ namespace ReportService.Api.Repository
             {
                 report.UpdatedAt = DateTime.Now;
                 _dbContext.Entry(report).State = EntityState.Modified;
-                _dbContext.Entry(report).Property(c => c.CreatedAt).IsModified = false;
+                _dbContext.Entry(report).Property(r => r.CreatedAt).IsModified = false;
                 
                 var num = await _dbContext.SaveChangesAsync();
                 return num > 0;
@@ -81,7 +81,12 @@ namespace ReportService.Api.Repository
 
         public async Task<Report> Get(Guid id)
         {
-            return await _dbContext.Reports.Where(c => c.Id == id).FirstOrDefaultAsync();
+            return await _dbContext.Reports.Where(r => r.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> Exists(Guid id)
+        {
+            return await _dbContext.Reports.Where(r => r.Id == id).CountAsync() > 0;
         }
 
     }

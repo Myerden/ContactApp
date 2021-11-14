@@ -68,5 +68,10 @@ namespace ContactService.Api.Repository
             return await _dbContext.Contacts.Where(c => c.Id == id).Include(c => c.ContactDetails).FirstOrDefaultAsync();
         }
 
+        public async Task<bool> Exists(Guid id)
+        {
+            return await _dbContext.Contacts.Where(c => c.Id == id).CountAsync() > 0;
+        }
+
     }
 }

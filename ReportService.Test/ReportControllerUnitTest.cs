@@ -20,18 +20,20 @@ namespace ReportService.Test
     {
         private IReportRepository repository;
         IMapper mapper;
-        private static DbContextOptions<ReportContext> dbContextOptions { get; set; }
-        public static string connectionString = "Server=reportapidb;Port=5432;User Id=admin;Password=admin;Database=ReportDB_Test;SSL Mode=Disable;";
+        private DbContextOptions<ReportContext> dbContextOptions { get; set; }
+        private ReportData reportData = new ReportData();
+        public static string connectionString = "Server=localhost;Port=5433;User Id=admin;Password=admin;Database=ReportDB_Test;SSL Mode=Disable;";
 
         static ReportControllerUnitTest()
         {
-            dbContextOptions = new DbContextOptionsBuilder<ReportContext>()
-                .UseNpgsql(connectionString)
-                .Options;
         }
 
         public ReportControllerUnitTest()
         {
+            dbContextOptions = new DbContextOptionsBuilder<ReportContext>()
+                .UseNpgsql(connectionString)
+                .Options;
+
             var context = new ReportContext(dbContextOptions);
 
             context.Database.Migrate();
@@ -46,12 +48,14 @@ namespace ReportService.Test
             mapper = mapperConfig.CreateMapper();
 
             //insert demo data
-            ReportData.DEMO.ForEach(c =>
+            for (int i = 0; i < reportData.DEMO.Count; i++)
             {
-                var report = mapper.Map<Report>(c);
+                var report = mapper.Map<Report>(reportData.DEMO[i]);
                 var insertedId = repository.Create(report).ConfigureAwait(false).GetAwaiter().GetResult();
-            });
+                reportData.DEMO[i] = mapper.Map<ReportDto>(report);
+            }
 
+            context.ChangeTracker.Clear();
         }
 
 
@@ -72,7 +76,7 @@ namespace ReportService.Test
         {
             var controller = new ReportController(repository, mapper, null);
 
-            var id = ReportData.DEMO[0].Id;
+            var id = reportData.DEMO[0].Id;
 
             var data = await controller.Get(id);
 
@@ -88,7 +92,7 @@ namespace ReportService.Test
 
             var data = await controller.Get(id);
 
-            Assert.IsType<NotFoundResult>(data);
+            Assert.IsType<NotFoundObjectResult>(data);
         }
 
         #endregion
@@ -114,7 +118,7 @@ namespace ReportService.Test
         {
             var controller = new ReportController(repository, mapper, null);
 
-            var id = ReportData.DEMO[0].Id;
+            var id = reportData.DEMO[0].Id;
 
             var data = await controller.Delete(id);
 
@@ -122,11 +126,11 @@ namespace ReportService.Test
 
             data = await controller.Get(id);
 
-            Assert.IsType<NotFoundResult>(data);
+            Assert.IsType<NotFoundObjectResult>(data);
         }
 
         [Fact]
-        public async void DeleteContact_ShouldReturnNotFoundResult()
+        public async void DeleteReport_ShouldReturnNotFoundResult()
         {
             var controller = new ReportController(repository, mapper, null);
 
@@ -134,7 +138,7 @@ namespace ReportService.Test
 
             var data = await controller.Delete(id);
 
-            Assert.IsType<NotFoundResult>(data);
+            Assert.IsType<NotFoundObjectResult>(data);
         }
 
         #endregion

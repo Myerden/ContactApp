@@ -1,0 +1,52 @@
+version: "3.6"
+services:
+    #contactrabbitmq:       
+    #    image: rabbitmq:3-management
+    #    container_name: contactrabbitmq
+    #    restart: always
+    
+    contactapidb: 
+        image: postgres
+        container_name: contactapidb
+        restart: always
+        
+    reportapidb: 
+        image: postgres
+        container_name: reportapidb
+        restart: always
+        
+    #contactappgateway:    
+    #    image: appgateway  
+    #    container_name: contactappgateway
+    #    build: 
+    #        context: .
+    #        dockerfile: AppGateway/Dockerfile 
+    #    restart: always    
+    #    depends_on:
+    #        - contactapi
+    #        - reportapi
+                
+    contactapi:
+        image: contactapi  
+        container_name: contactapi  
+        build: 
+            context: .
+            dockerfile: ContactService.Api/Dockerfile 
+        restart: always       
+        depends_on:
+            - contactapidb
+        
+    #reportapi:
+    #    image: reportapi     
+    #    container_name: reportapi
+    #    build: 
+    #        context: .
+    #        dockerfile: ReportService.Api/Dockerfile  
+    #    restart: always
+    #    depends_on:
+    #        - contactrabbitmq 
+    #        - reportapidb 
+
+    pgadmin:
+        image: dpage/pgadmin4
+        restart: always

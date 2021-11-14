@@ -18,5 +18,7 @@ namespace ContactService.Api.Repository
 
         public Task<Contact> Get(Guid id);
 
+        public Task<bool> Exists(Guid id);
+
     }
 }

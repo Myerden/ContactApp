@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ContactService.Test
 {
-    public static class ContactData
+    public class ContactData
     {
-        public static ContactDto VALID = new ContactDto()
+        public ContactDto VALID = new ContactDto()
         {
             FirstName = "Yusuf",
             LastName = "Erden",
@@ -22,7 +22,7 @@ namespace ContactService.Test
             }
         };
 
-        public static ContactDto UNVALID = new ContactDto()
+        public ContactDto UNVALID = new ContactDto()
         {
             FirstName = "Yusuf",
             Company = "DEF Ltd. Şti.",
@@ -34,31 +34,29 @@ namespace ContactService.Test
             }
         };
 
-        public static List<ContactDto> DEMO = new List<ContactDto>() {
+        public List<ContactDto> DEMO = new List<ContactDto>() {
             new ContactDto()
             {
-                Id = Guid.NewGuid(),
                 FirstName = "Muhammed",
                 LastName = "Erden",
                 Company = "XYZ Ltd. Şti.",
                 ContactDetails = new List<ContactDetailDto>()
                 {
-                    new ContactDetailDto(){ Id = Guid.NewGuid(), ContactDetailType = ContactDetailType.PHONE, ContactDetailContent = "0212 333 4455" },
-                    new ContactDetailDto(){ Id = Guid.NewGuid(), ContactDetailType = ContactDetailType.EMAIL, ContactDetailContent = "example3@example.org" },
-                    new ContactDetailDto(){ Id = Guid.NewGuid(), ContactDetailType = ContactDetailType.LOCATION, ContactDetailContent = "İzmir" },
+                    new ContactDetailDto(){ ContactDetailType = ContactDetailType.PHONE, ContactDetailContent = "0212 333 4455" },
+                    new ContactDetailDto(){ ContactDetailType = ContactDetailType.EMAIL, ContactDetailContent = "example3@example.org" },
+                    new ContactDetailDto(){ ContactDetailType = ContactDetailType.LOCATION, ContactDetailContent = "İzmir" },
                 }
             },
             new ContactDto()
             {
-                Id = Guid.NewGuid(),
                 FirstName = "Mike",
                 LastName = "Tyson",
                 Company = "Tyson Lojistik ve Taşımacılık",
                 ContactDetails = new List<ContactDetailDto>()
                 {
-                    new ContactDetailDto(){ Id = Guid.NewGuid(), ContactDetailType = ContactDetailType.PHONE, ContactDetailContent = "0545 123 4545" },
-                    new ContactDetailDto(){ Id = Guid.NewGuid(), ContactDetailType = ContactDetailType.EMAIL, ContactDetailContent = "tyson@example.org" },
-                    new ContactDetailDto(){ Id = Guid.NewGuid(), ContactDetailType = ContactDetailType.LOCATION, ContactDetailContent = "New York" },
+                    new ContactDetailDto(){ ContactDetailType = ContactDetailType.PHONE, ContactDetailContent = "0545 123 4545" },
+                    new ContactDetailDto(){ ContactDetailType = ContactDetailType.EMAIL, ContactDetailContent = "tyson@example.org" },
+                    new ContactDetailDto(){ ContactDetailType = ContactDetailType.LOCATION, ContactDetailContent = "New York" },
                 }
             }
         };

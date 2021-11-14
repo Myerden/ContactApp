@@ -93,7 +93,7 @@ namespace ReportService.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (await _reportRepository.Get(id) == null)
+            if (await _reportRepository.Exists(id) == false)
             {
                 return NotFound("Report not found");
             }

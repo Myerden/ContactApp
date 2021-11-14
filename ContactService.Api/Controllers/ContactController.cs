@@ -62,7 +62,7 @@ namespace ContactService.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] ContactDto contactDto)
         {
-            if (await _contactRepository.Get(id) == null)
+            if (await _contactRepository.Exists(id) == false)
             {
                 return NotFound("Contact not found");
             }

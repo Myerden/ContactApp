@@ -20,18 +20,17 @@ namespace ContactService.Test
     {
         private IContactRepository repository;
         IMapper mapper;
-        private static DbContextOptions<ContactContext> dbContextOptions { get; set; }
+        private DbContextOptions<ContactContext> dbContextOptions { get; set; }
+        private ContactData contactData = new ContactData();
         public static string connectionString = "Server=localhost;Port=5432;User Id=admin;Password=admin;Database=ContactDB_Test;SSL Mode=Disable;";
 
-        static ContactControllerUnitTest()
+
+        public ContactControllerUnitTest()
         {
             dbContextOptions = new DbContextOptionsBuilder<ContactContext>()
                 .UseNpgsql(connectionString)
                 .Options;
-        }
 
-        public ContactControllerUnitTest()
-        {
             var context = new ContactContext(dbContextOptions);
 
             context.Database.Migrate();
@@ -46,12 +45,14 @@ namespace ContactService.Test
             mapper = mapperConfig.CreateMapper();
 
             //insert demo data
-            ContactData.DEMO.ForEach(c =>
+            for (int i = 0; i < contactData.DEMO.Count; i++)
             {
-                var contact = mapper.Map<Contact>(c);
+                var contact = mapper.Map<Contact>(contactData.DEMO[i]);
                 var insertedId = repository.Create(contact).ConfigureAwait(false).GetAwaiter().GetResult();
-            });
+                contactData.DEMO[i] = mapper.Map<ContactDto>(contact);
+            }
 
+            context.ChangeTracker.Clear();
         }
 
         #region Insert 
@@ -61,26 +62,23 @@ namespace ContactService.Test
         {
             var controller = new ContactController(repository, mapper);
 
-            var data = await controller.Post(ContactData.VALID) as OkObjectResult;
+            controller.ValidateModel(contactData.VALID);
 
-            Assert.IsType<OkObjectResult>(data);
+            var data = await controller.Post(contactData.VALID);
 
-            var obj = data.Value as ContactDto;
-
-            Assert.NotNull(obj);
-
-            Assert.Equal(ContactData.VALID.FirstName, obj.FirstName);
-            Assert.Equal(ContactData.VALID.LastName, obj.LastName);
+            Assert.IsType<CreatedAtActionResult>(data);
         }
 
         [Fact]
         public async void InsertContact_ShouldReturnBadRequest()
         {
             var controller = new ContactController(repository, mapper);
-        
-            var data = await controller.Post(ContactData.UNVALID);
 
-            Assert.IsType<BadRequestResult>(data);
+            controller.ValidateModel(contactData.UNVALID);
+
+            var data = await controller.Post(contactData.UNVALID);
+
+            Assert.IsType<BadRequestObjectResult>(data);
         }
 
         #endregion
@@ -92,7 +90,7 @@ namespace ContactService.Test
         {
             var controller = new ContactController(repository, mapper);
 
-            var id = ContactData.DEMO[0].Id;
+            var id = contactData.DEMO[0].Id;
 
             var data = await controller.Get(id);
 
@@ -108,7 +106,7 @@ namespace ContactService.Test
 
             var data = await controller.Get(id);
 
-            Assert.IsType<NotFoundResult>(data);
+            Assert.IsType<NotFoundObjectResult>(data);
         }
 
         [Fact]
@@ -116,7 +114,7 @@ namespace ContactService.Test
         {
             var controller = new ContactController(repository, mapper);
 
-            var demo = ContactData.DEMO[0];
+            var demo = contactData.DEMO[0];
 
             var data = await controller.Get(demo.Id) as OkObjectResult;
 
@@ -166,7 +164,7 @@ namespace ContactService.Test
 
             Assert.NotNull(obj);
 
-            ContactData.DEMO.ForEach(demoContact =>
+            contactData.DEMO.ForEach(demoContact =>
             {
                 var contact = obj.Find(c => c.Id == demoContact.Id);
 
@@ -188,25 +186,15 @@ namespace ContactService.Test
         {
             var controller = new ContactController(repository, mapper);
 
-            var id = ContactData.DEMO[0].Id;
+            var id = contactData.DEMO[0].Id;
 
-            var data = await controller.Get(id) as OkObjectResult;
+            contactData.DEMO[0].FirstName = "Updated First Name";
+            contactData.DEMO[0].LastName = "Updated Last Name";
+            contactData.DEMO[0].Company = "Updated Company Name";
 
-            Assert.IsType<OkObjectResult>(data);
+            controller.ValidateModel(contactData.DEMO[0]);
 
-            var obj = data.Value as ContactDto;
-
-            Assert.NotNull(obj);
-
-            var contact = new ContactDto()
-            {
-                Id = id,
-                FirstName = "Updated First Name",
-                LastName = "Updated Last Name",
-                Company = "Updated Company Name",
-            };
-
-            var updatedResult = await controller.Put(id, contact) as NoContentResult;
+            var updatedResult = await controller.Put(id, contactData.DEMO[0]);
 
             Assert.IsType<NoContentResult>(updatedResult);
 
@@ -218,9 +206,9 @@ namespace ContactService.Test
 
             Assert.NotNull(updatedObj);
 
-            Assert.Equal(updatedObj.FirstName, contact.FirstName);
-            Assert.Equal(updatedObj.LastName, contact.LastName);
-            Assert.Equal(updatedObj.Company, contact.Company);
+            Assert.Equal(updatedObj.FirstName, contactData.DEMO[0].FirstName);
+            Assert.Equal(updatedObj.LastName, contactData.DEMO[0].LastName);
+            Assert.Equal(updatedObj.Company, contactData.DEMO[0].Company);
         }
 
         [Fact]
@@ -228,7 +216,7 @@ namespace ContactService.Test
         {
             var controller = new ContactController(repository, mapper);
 
-            var id = ContactData.DEMO[0].Id;
+            var id = contactData.DEMO[0].Id;
 
             var contact = new ContactDto()
             {
@@ -238,10 +226,12 @@ namespace ContactService.Test
                 Company = "Updated Company Name",
             };
 
+            controller.ValidateModel(contact);
+
             // LastName field is required
             var updatedResult = await controller.Put(id, contact);
 
-            Assert.IsType<BadRequestResult>(updatedResult);
+            Assert.IsType<BadRequestObjectResult>(updatedResult);
         }
 
         [Fact]
@@ -261,7 +251,7 @@ namespace ContactService.Test
 
             var updatedResult = await controller.Put(id, contact);
 
-            Assert.IsType<NotFoundResult>(updatedResult);
+            Assert.IsType<NotFoundObjectResult>(updatedResult);
         }
 
         #endregion
@@ -273,7 +263,7 @@ namespace ContactService.Test
         {
             var controller = new ContactController(repository, mapper);
 
-            var id = ContactData.DEMO[0].Id;
+            var id = contactData.DEMO[0].Id;
 
             var data = await controller.Delete(id);
 
@@ -281,7 +271,7 @@ namespace ContactService.Test
 
             data = await controller.Get(id);
 
-            Assert.IsType<NotFoundResult>(data);
+            Assert.IsType<NotFoundObjectResult>(data);
         }
 
         [Fact]
@@ -293,7 +283,7 @@ namespace ContactService.Test
 
             var data = await controller.Delete(id);
 
-            Assert.IsType<NotFoundResult>(data);
+            Assert.IsType<NotFoundObjectResult>(data);
         }
 
         [Fact]
@@ -301,8 +291,8 @@ namespace ContactService.Test
         {
             var controller = new ContactController(repository, mapper);
 
-            var id = ContactData.DEMO[0].Id;
-            var detailId = ContactData.DEMO[0].ContactDetails[0].Id;
+            var id = contactData.DEMO[0].Id;
+            var detailId = contactData.DEMO[0].ContactDetails[0].Id;
 
             var data = await controller.DeleteDetail(id, detailId);
 
@@ -310,7 +300,7 @@ namespace ContactService.Test
 
             var getData = await controller.Get(id) as OkObjectResult;
 
-            Assert.IsType<OkObjectResult>(data);
+            Assert.IsType<OkObjectResult>(getData);
 
             var obj = getData.Value as ContactDto;
 
@@ -326,12 +316,12 @@ namespace ContactService.Test
         {
             var controller = new ContactController(repository, mapper);
 
-            var id = ContactData.DEMO[0].Id;
+            var id = contactData.DEMO[0].Id;
             var detailId = Guid.NewGuid();
 
             var data = await controller.DeleteDetail(id, detailId);
 
-            Assert.IsType<NotFoundResult>(data);
+            Assert.IsType<NotFoundObjectResult>(data);
         }
 
         #endregion

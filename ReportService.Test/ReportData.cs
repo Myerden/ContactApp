@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ReportService.Test
 {
-    public static class ReportData
+    public class ReportData
     {
-        public static List<ReportDto> DEMO = new List<ReportDto>() {
+        public List<ReportDto> DEMO = new List<ReportDto>() {
             new ReportDto()
             {
                 Id = Guid.NewGuid(),

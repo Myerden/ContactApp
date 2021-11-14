@@ -20,5 +20,6 @@ namespace ReportService.Api.Repository
 
         public Task<Report> Get(Guid id);
 
+        public Task<bool> Exists(Guid id);
     }
 }
